@@ -3,7 +3,8 @@
 #include "PMCAudioMonitor.h"
 
 #include "ToolMenus.h"
-#include "AudioLogList.h"
+#include "UI/AudioLogList.h"
+#include "UI/AudioOptionPanel.h"
 
 #define LOCTEXT_NAMESPACE "FPMCAudioMonitorModule"
 #define CLASS FPMCAudioMonitorModule
@@ -66,14 +67,12 @@ TSharedRef<SDockTab> CLASS::CreateDockTab(const FSpawnTabArgs& SpawnTabArgs)
     SNew(SVerticalBox)
     + SVerticalBox::Slot()
     [
-      SNew(STextBlock)
-        .Text(FText::FromString("Text"))  
+      SNew(SAudioOptionPanel)
     ]
     + SVerticalBox::Slot()
     [
       SNew(SAudioLogList)
     ]
-
   ];
 }
 
