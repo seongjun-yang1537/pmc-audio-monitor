@@ -18,6 +18,9 @@ public:
 	
 	TArray<FAudioLogDataPtr>& GetLogs();
 	void AddLog(FAudioLogData Log);
+
+	TArray<FAudioLogDataPtr> History;
+
 private:
 	static TUniquePtr<FPMCAudioManager> instance;
 

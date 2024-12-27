@@ -9,9 +9,9 @@
 
 void CLASS::Construct(const FArguments& InArgs)
 {
-    FPMCAudioManager* Manager = FPMCAudioManager::Get();
-    Manager->OnAddLog.AddRaw(this, &CLASS::OnAddLog);
-    auto& Items = Manager->GetLogs();
+    FPMCAudioManager::Get()->OnAddLog.AddRaw(this, &CLASS::OnAddLog);
+
+    auto& Items = FPMCAudioManager::Get()->GetLogs();
     
     ListView = SNew(SListView<FAudioLogDataPtr>)
         .ItemHeight(SIZE_ELEMENT)
@@ -21,6 +21,11 @@ void CLASS::Construct(const FArguments& InArgs)
     ChildSlot
     [
         SNew(SVerticalBox)
+        + SVerticalBox::Slot()
+        .AutoHeight()
+        [
+            ListTabGroup().ToSharedRef()
+        ]
         + SVerticalBox::Slot()
         .AutoHeight()
         [
@@ -85,6 +90,58 @@ TSharedPtr<SHeaderRow> CLASS::ListHeaderWidget()
     return Header;
 }
 
+void CLASS::ChangeListCurrentLogs()
+{
+    auto& Items = FPMCAudioManager::Get()->GetLogs();
+    
+    ListView->SetItemsSource(&Items);
+    ListView->RequestListRefresh();
+};
+
+void CLASS::ChangeListHistoryLogs()
+{
+    auto& Items = FPMCAudioManager::Get()->History;
+
+    ListView->SetItemsSource(&Items);
+    ListView->RequestListRefresh();
+};
+
+TSharedPtr<SHorizontalBox> CLASS::ListTabGroup()
+{
+    return SNew(SHorizontalBox)
+    + SHorizontalBox::Slot()
+    [
+        SNew(SButton)
+            .Text(FText::FromString("Current"))
+            .HAlign(HAlign_Center)
+            .IsEnabled_Lambda([this]()
+            {
+                return ListTabState == EListTabState::History;
+            })
+            .OnClicked_Lambda([this]()
+            {
+                ListTabState = EListTabState::Current;
+                ChangeListCurrentLogs();
+                return FReply::Handled();
+            })
+    ]
+    +SHorizontalBox::Slot()
+    [
+        SNew(SButton)
+            .Text(FText::FromString("History"))
+            .HAlign(HAlign_Center)
+            .IsEnabled_Lambda([this]()
+            {
+                return ListTabState == EListTabState::Current;
+            })
+            .OnClicked_Lambda([this]()
+            {
+                ListTabState = EListTabState::History;
+                ChangeListHistoryLogs();
+                return FReply::Handled();
+            })
+    ];
+}
 
 TSharedRef<ITableRow> CLASS::OnGenerateRowForListView(
   FAudioLogDataPtr Item, 

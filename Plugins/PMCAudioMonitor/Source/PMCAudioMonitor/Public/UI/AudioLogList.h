@@ -16,9 +16,21 @@ public:
   SLATE_BEGIN_ARGS(SAudioLogList){}
   SLATE_END_ARGS()
 
+  enum EListTabState
+  {
+    Current,
+    History,
+  };
+  EListTabState ListTabState = EListTabState::Current;
+  
   void Construct(const FArguments& InArgs);
+  
   TSharedPtr<SHeaderRow> ListHeaderWidget();
+  TSharedPtr<SHorizontalBox> ListTabGroup();
 
+  void ChangeListCurrentLogs(); 
+  void ChangeListHistoryLogs(); 
+  
 private:
   TSharedPtr<SListView<FAudioLogDataPtr>> ListView;
   
