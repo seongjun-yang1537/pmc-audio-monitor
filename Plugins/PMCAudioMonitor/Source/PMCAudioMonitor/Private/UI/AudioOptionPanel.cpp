@@ -32,9 +32,23 @@ void CLASS::Construct(const FArguments& Args)
 
 FReply CLASS::OnAddEmptyLog()
 {
-	FAudioLogData EmptyLog = FAudioLogData(TEXT("Empty"));
+	auto Manager = FPMCAudioManager::Get();
+	int32 Len = Manager->GetLogs().Num();
 	
-	FPMCAudioManager::Get()->AddLog(EmptyLog);
-	UE_LOG(LogTemp, Log, TEXT("%d"), FPMCAudioManager::Get()->GetLogs().Num());
+	FAudioLogData EmptyLog = FAudioLogData();
+	EmptyLog.Id = Len+1;
+	EmptyLog.StartTime = FDateTime::Now();
+	EmptyLog.Volume = FMath::FRandRange(0.0f, 1.0f);
+	EmptyLog.Pitch = FMath::FRandRange(0.0f, 1.0f);
+	EmptyLog.Position = FVector3d(
+		FMath::FRandRange(0.0f, 100.0f),
+		FMath::FRandRange(0.0f, 100.0f),
+		FMath::FRandRange(0.0f, 100.0f)
+	);
+	EmptyLog.Context = TEXT("Context");
+	EmptyLog.AudioEvent = TEXT("Audio Event");
+	EmptyLog.bPrevent = Len%2 == 0;
+	
+	Manager->AddLog(EmptyLog);
 	return FReply::Handled();
 }

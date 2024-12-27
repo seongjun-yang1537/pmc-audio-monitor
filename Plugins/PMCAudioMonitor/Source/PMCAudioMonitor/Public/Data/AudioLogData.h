@@ -9,8 +9,28 @@ struct FAudioLogData
   GENERATED_USTRUCT_BODY()
 public:
   UPROPERTY()
-  FString Msg;
+  int32 Id;
+
+  UPROPERTY()
+  FDateTime StartTime;
+
+  UPROPERTY()
+  float Volume;
+  
+  UPROPERTY()
+  float Pitch;
+
+  UPROPERTY()
+  FVector3d Position;
+
+  UPROPERTY()
+  FString Context;
+  
+  UPROPERTY()
+  FString AudioEvent;
+  
+  UPROPERTY()
+  bool bPrevent;
 
   FAudioLogData() {}
-  FAudioLogData(FString msg) : Msg(msg) {}
 };

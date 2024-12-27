@@ -9,6 +9,12 @@ CLASS::CLASS()
 	
 }
 
+CLASS::~CLASS()
+{
+	OnAddLog.Clear();
+	UE_LOG(LogTemp, Log, TEXT("[My Debug]"));
+}
+
 CLASS* CLASS::Get()
 {
 	if(!instance.IsValid())

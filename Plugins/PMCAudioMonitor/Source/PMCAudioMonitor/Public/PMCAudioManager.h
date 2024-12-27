@@ -12,6 +12,7 @@ public:
 	FOnAddLog OnAddLog;
 	
 	FPMCAudioManager();
+	~FPMCAudioManager();
 	
 	static FPMCAudioManager* Get();
 	

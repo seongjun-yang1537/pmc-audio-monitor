@@ -14,6 +14,7 @@ public:
   SLATE_END_ARGS()
 
   void Construct(const FArguments& InArgs);
+  TSharedPtr<SHeaderRow> ListHeaderWidget();
 
 private:
   TSharedPtr<SListView<FAudioLogDataPtr>> ListView;

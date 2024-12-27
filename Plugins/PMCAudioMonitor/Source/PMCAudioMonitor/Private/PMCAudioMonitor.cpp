@@ -66,10 +66,12 @@ TSharedRef<SDockTab> CLASS::CreateDockTab(const FSpawnTabArgs& SpawnTabArgs)
   [
     SNew(SVerticalBox)
     + SVerticalBox::Slot()
+    .AutoHeight()
     [
       SNew(SAudioOptionPanel)
     ]
     + SVerticalBox::Slot()
+    .AutoHeight()
     [
       SNew(SAudioLogList)
     ]
