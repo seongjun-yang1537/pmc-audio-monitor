@@ -11,4 +11,12 @@ public:
 
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
+
+  void RegisterMenus();
+  void RegisterDockTab();
+  
+  void UnRegisterDockTab();
+
+  TSharedRef<SDockTab> CreateDockTab(const FSpawnTabArgs& SpawnTabArgs);
+  void OnSpawnDockTab();
 };
