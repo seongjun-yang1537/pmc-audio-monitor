@@ -27,7 +27,7 @@ public:
   FString Context;
   
   UPROPERTY()
-  FString AudioEvent;
+  FString AudioSource;
   
   UPROPERTY()
   bool bPrevent;

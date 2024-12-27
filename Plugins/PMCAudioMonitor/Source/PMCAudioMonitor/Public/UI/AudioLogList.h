@@ -5,6 +5,9 @@
 
 #include "Data/AudioLogData.h"
 
+#define SIZE_ELEMENT 24
+#define SCROLL_MAX_ELEMENT 15
+
 typedef TSharedPtr<FAudioLogData> FAudioLogDataPtr;
 
 class SAudioLogList : public SCompoundWidget

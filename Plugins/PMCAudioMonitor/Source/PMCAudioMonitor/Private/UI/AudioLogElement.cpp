@@ -30,8 +30,8 @@ void CLASS::Construct(const FArguments& Args)
 			)),
 		SNew(STextBlock)
 			.Text(FText::FromString(Log.Context)),
-		SNew(STextBlock)
-			.Text(FText::FromString(Log.AudioEvent)),
+		SNew(SButton)
+			.Text(FText::FromString(Log.AudioSource)),
 		SNew(SCheckBox)
 			.IsChecked(Log.bPrevent)
 	};

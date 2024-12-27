@@ -46,7 +46,7 @@ FReply CLASS::OnAddEmptyLog()
 		FMath::FRandRange(0.0f, 100.0f)
 	);
 	EmptyLog.Context = TEXT("Context");
-	EmptyLog.AudioEvent = TEXT("Audio Event");
+	EmptyLog.AudioSource = TEXT("Audio Source");
 	EmptyLog.bPrevent = Len%2 == 0;
 	
 	Manager->AddLog(EmptyLog);

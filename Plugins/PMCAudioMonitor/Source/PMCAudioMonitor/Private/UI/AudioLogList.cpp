@@ -14,7 +14,7 @@ void CLASS::Construct(const FArguments& InArgs)
     auto& Items = Manager->GetLogs();
     
     ListView = SNew(SListView<FAudioLogDataPtr>)
-        .ItemHeight(24)
+        .ItemHeight(SIZE_ELEMENT)
         .ListItemsSource(&Items) 
         .OnGenerateRow(this, &CLASS::OnGenerateRowForListView);
     
@@ -29,7 +29,13 @@ void CLASS::Construct(const FArguments& InArgs)
         + SVerticalBox::Slot()
         .AutoHeight()
         [
-            ListView.ToSharedRef()
+            SNew(SScrollBox)
+            .Orientation(Orient_Vertical)
+            + SScrollBox::Slot()
+            .MaxSize(SIZE_ELEMENT*SCROLL_MAX_ELEMENT)
+            [
+                ListView.ToSharedRef()
+            ]
         ]
     ];
 }
@@ -44,7 +50,7 @@ TSharedPtr<SHeaderRow> CLASS::ListHeaderWidget()
         TEXT("Pitch"),
         TEXT("Position"),
         TEXT("Context"),
-        TEXT("AudioEvent"),
+        TEXT("Audio Source"),
         TEXT("Prevent"),
     };
 
@@ -72,6 +78,7 @@ TSharedPtr<SHeaderRow> CLASS::ListHeaderWidget()
             .DefaultLabel(FText::FromString(element))
             .FillWidth(HeaderWidthRatios[i])
             .HAlignHeader(HAlign_Center)
+            .VAlignHeader(VAlign_Center)
         );
     }
     
