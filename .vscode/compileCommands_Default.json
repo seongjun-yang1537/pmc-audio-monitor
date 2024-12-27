@@ -1,0 +1,50 @@
+[
+	{
+		"file": "C:\\Users\\admin\\Desktop\\pmc-audio-monitor\\Plugins\\PMCAudioMonitor\\Source\\PMCAudioMonitor\\PMCAudioMonitor.Build.cs",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\admin\\Desktop\\pmc-audio-monitor\\.vscode\\compileCommands_Default\\PMCAudioMonitor.26.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.4\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\admin\\Desktop\\pmc-audio-monitor\\Plugins\\PMCAudioMonitor\\Source\\PMCAudioMonitor\\Private\\PMCAudioMonitor.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\admin\\Desktop\\pmc-audio-monitor\\.vscode\\compileCommands_Default\\PMCAudioMonitor.26.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.4\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\admin\\Desktop\\pmc-audio-monitor\\Plugins\\PMCAudioMonitor\\Source\\PMCAudioMonitor\\Public\\PMCAudioMonitor.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\admin\\Desktop\\pmc-audio-monitor\\.vscode\\compileCommands_Default\\PMCAudioMonitor.26.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.4\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\admin\\Desktop\\pmc-audio-monitor\\Source\\PMCAudioMonitorProj\\PMCAudioMonitorProj.Build.cs",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\admin\\Desktop\\pmc-audio-monitor\\.vscode\\compileCommands_Default\\PMCAudioMonitorProj.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.4\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\admin\\Desktop\\pmc-audio-monitor\\Source\\PMCAudioMonitorProj\\PMCAudioMonitorProj.cpp",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\admin\\Desktop\\pmc-audio-monitor\\.vscode\\compileCommands_Default\\PMCAudioMonitorProj.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.4\\Engine\\Source"
+	},
+	{
+		"file": "C:\\Users\\admin\\Desktop\\pmc-audio-monitor\\Source\\PMCAudioMonitorProj\\PMCAudioMonitorProj.h",
+		"arguments": [
+			"C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.38.33130\\bin\\Hostx64\\x64\\cl.exe",
+			"@C:\\Users\\admin\\Desktop\\pmc-audio-monitor\\.vscode\\compileCommands_Default\\PMCAudioMonitorProj.1.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.4\\Engine\\Source"
+	}
+]
