@@ -44,6 +44,7 @@ void CLASS::RegisterDockTab()
     FOnSpawnTab::CreateRaw(this, &CLASS::CreateDockTab)
   )
   .SetDisplayName(LOCTEXT(DOCKTAB_NAME, "PMC Audio Monitor"))
+  .SetIcon(FSlateIcon(FAppStyle::GetAppStyleSetName(), "ClassIcon.AudioVolume"))
   .SetGroup(WorkspaceGroup);
 }
 
