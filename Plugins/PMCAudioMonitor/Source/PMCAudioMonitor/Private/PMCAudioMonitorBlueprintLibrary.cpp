@@ -1,30 +1,32 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "PMCAudioMonitorBlueprintLibrary.h"
 
 #include "PMCAudioManager.h"
+#include "Components/AudioComponent.h"
 #include "Data/AudioLogData.h"
+#include "Sound/SoundCue.h"
 
 void UPMCAudioMonitorBlueprintLibrary::AddSoundLog(UAudioComponent* AudioComponent)
 {
+	if(!AudioComponent)
+	{
+		return;
+	}
+	
 	auto Manager = FPMCAudioManager::Get();
 	int32 Len = Manager->GetLogs().Num();
 	
-	FAudioLogData EmptyLog = FAudioLogData();
-	EmptyLog.Id = Len+1;
-	EmptyLog.StartTime = FDateTime::Now();
-	EmptyLog.Volume = FMath::FRandRange(0.0f, 1.0f);
-	EmptyLog.Pitch = FMath::FRandRange(0.0f, 1.0f);
-	EmptyLog.PlayTime = FMath::FRandRange(0.0f, 1.0f);
-	EmptyLog.Position = FVector3d(
-		FMath::FRandRange(0.0f, 100.0f),
-		FMath::FRandRange(0.0f, 100.0f),
-		FMath::FRandRange(0.0f, 100.0f)
-	);
-	EmptyLog.Context = TEXT("Context");
-	EmptyLog.AudioSource = TEXT("Audio Source");
-	EmptyLog.bPrevent = Len%2 == 0;
+	FAudioLogData Log = FAudioLogData();
+	Log.Id = Len+1;
+	Log.StartTime = FDateTime::Now();
+	Log.PlayTime = FMath::FRandRange(0.0f, 1.0f);
+	Log.Position = AudioComponent->GetComponentLocation();
+	Log.Context = TEXT("Context");
+	Log.AudioSource = TEXT("Audio Source");
+	Log.bPrevent = Len%2 == 0;
+	Log.AudioComponent = AudioComponent;
+
+	USoundCue* SoundCue = Log.GetSoundCue();
+	UE_LOG(LogTemp, Log, TEXT("%s"), *SoundCue->GetName());
 	
-	Manager->AddLog(EmptyLog);
+	Manager->AddLog(Log);
 }

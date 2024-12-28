@@ -17,12 +17,6 @@ public:
   FDateTime StartTime;
 
   UPROPERTY()
-  float Volume;
-  
-  UPROPERTY()
-  float Pitch;
-
-  UPROPERTY()
   float PlayTime;
 
   UPROPERTY()
@@ -37,7 +31,15 @@ public:
   UPROPERTY()
   bool bPrevent;
 
+  UPROPERTY()
+  UAudioComponent* AudioComponent;
+
   FAudioLogData() {}
+  
+  float GetPitch() const;
+  float GetVolume() const;
+
+  USoundCue* GetSoundCue() const;
   
   static FAudioLogDataComparer OnCompare(FString Element);
 };

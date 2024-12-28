@@ -202,4 +202,5 @@ void SAudioLogList::OnAddLog(FAudioLogDataPtr LogPtr)
 {
     ListView->RequestListRefresh();
 }
+
 #pragma endregion

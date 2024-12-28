@@ -26,10 +26,12 @@ public class PMCAudioMonitor : ModuleRules
 			new string[]
 			{
 				"Core",
-        "Slate",
+				"Slate",
 				"SlateCore",
-        "ToolMenus",
-        "InputCore",
+		        "ToolMenus",
+		        "InputCore",
+		        "UnrealEd"
+		        
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);

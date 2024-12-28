@@ -17,5 +17,7 @@ public:
 	void Construct(const FArguments& Args);
 
 private:
-	TSharedPtr<SWidget> AudioSourceWidget(FString AudioSource);
+	TSharedPtr<SWidget> AudioSourceWidget(FAudioLogData LogData);
+	
+	void HighlightSoundCueInContentBrowser(USoundCue* SoundCue);
 };

@@ -1,5 +1,8 @@
 #include "UI/AudioLogElement.h"
 
+#include "FileHelpers.h"
+#include "AssetRegistry/AssetRegistryModule.h"
+#include "Sound/SoundCue.h"
 #include "UI/AudioLogList.h"
 #include "Widgets/Notifications/SProgressBar.h"
 
@@ -34,11 +37,11 @@ FAudioLogDataComparer FAudioLogData::OnCompare(FString Element)
 		}
 		else if (Element == "Volume")
 		{
-			return A.Volume < B.Volume;
+			return A.GetVolume() < B.GetVolume();
 		}
 		else if (Element == "Pitch")
 		{
-			return A.Pitch < B.Pitch;
+			return A.GetVolume() < B.GetVolume();
 		}
 		else if (Element == "PlayTime")
 		{
@@ -83,20 +86,20 @@ void SAudioLogElement::Construct(const FArguments& Args)
 		+ SOverlay::Slot()
 		[
 			SNew(SProgressBar)
-				.Percent(Log.Volume)
+				.Percent(Log.GetVolume())
 		]
 		+ SOverlay::Slot()
 		[
 			SNew(STextBlock)
 				.Text(FText::FromString(FString::Printf(
 						TEXT("%.2f"),
-						Log.Volume)))
+						Log.GetVolume())))
 		],
 		
 		SNew(STextBlock)
 			.Text(FText::FromString(FString::Printf(
 				TEXT("%.2f"),
-				Log.Pitch))),
+				Log.GetPitch()))),
 				
 		SNew(SOverlay)
 		+ SOverlay::Slot()
@@ -125,7 +128,7 @@ void SAudioLogElement::Construct(const FArguments& Args)
 		SNew(STextBlock)
 			.Text(FText::FromString(Log.Context)),
 
-		AudioSourceWidget(Log.AudioSource),
+		AudioSourceWidget(Log),
 		
 		SNew(SCheckBox)
 			.IsChecked(Log.bPrevent)
@@ -155,14 +158,16 @@ void SAudioLogElement::Construct(const FArguments& Args)
 	];
 }
 
-TSharedPtr<SWidget> SAudioLogElement::AudioSourceWidget(FString AudioSource)
+TSharedPtr<SWidget> SAudioLogElement::AudioSourceWidget(FAudioLogData LogData)
 {
+	auto SoundCue = LogData.GetSoundCue();
+	
 	return 	SNew(SHorizontalBox)
 	+ SHorizontalBox::Slot()
 	.AutoWidth()
 	[
 		SNew(STextBlock)
-			.Text(FText::FromString(AudioSource))
+			.Text(FText::FromString(SoundCue->GetName()))
 	]
 	+ SHorizontalBox::Slot()
 	.AutoWidth()
@@ -173,7 +178,31 @@ TSharedPtr<SWidget> SAudioLogElement::AudioSourceWidget(FString AudioSource)
 				.Image(
 					FSlateIcon(FAppStyle::GetAppStyleSetName(), "Icons.BrowseContent").GetIcon())
 		]
+		.OnClicked_Lambda([this, SoundCue]() -> FReply
+		{
+			HighlightSoundCueInContentBrowser(SoundCue);
+			return FReply::Handled();
+		})
 	];
 }
 
+#pragma endregion
+
+#pragma region Private
+void SAudioLogElement::HighlightSoundCueInContentBrowser(USoundCue* SoundCue)
+{
+	FAssetRegistryModule& AssetRegistryModule =
+		FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
+	IAssetRegistry& AssetRegistry = AssetRegistryModule.Get();
+
+	FAssetData AssetData =
+		AssetRegistry.GetAssetByObjectPath(FSoftObjectPath(SoundCue).GetAssetPathName());
+	if(AssetData.IsValid())
+	{
+		TArray<FAssetData> SelectedAssets;
+		SelectedAssets.Add(AssetData);
+
+		GEditor->SyncBrowserToObject(AssetData);
+	}
+}
 #pragma endregion 
