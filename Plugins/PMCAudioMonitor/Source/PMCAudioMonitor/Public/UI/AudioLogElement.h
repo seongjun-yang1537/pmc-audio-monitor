@@ -15,4 +15,7 @@ public:
 	SLATE_END_ARGS()
 	
 	void Construct(const FArguments& Args);
+
+private:
+	TSharedPtr<SWidget> AudioSourceWidget(FString AudioSource);
 };

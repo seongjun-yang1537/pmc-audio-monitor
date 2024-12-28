@@ -10,30 +10,56 @@
 
 typedef TSharedPtr<FAudioLogData> FAudioLogDataPtr;
 
+struct FAudioListHeaderElement
+{
+public:
+  FString Name;
+  float Weight;
+
+  FAudioListHeaderElement(FString Name, float Weight) : Name(Name), Weight(Weight) {}
+};
+
 class SAudioLogList : public SCompoundWidget
 {
 public:
   SLATE_BEGIN_ARGS(SAudioLogList){}
   SLATE_END_ARGS()
 
+#pragma region Variables
+  static TArray<FAudioListHeaderElement> HeaderElements;
+  
   enum EListTabState
   {
     Current,
     History,
   };
   EListTabState ListTabState = EListTabState::Current;
-  
+
+  TSharedPtr<SButton> ButtonCurrent;
+  TSharedPtr<SButton> ButtonHistory;
+#pragma endregion 
+
+#pragma region Methods
   void Construct(const FArguments& InArgs);
   
   TSharedPtr<SHeaderRow> ListHeaderWidget();
   TSharedPtr<SHorizontalBox> ListTabGroup();
 
   void ChangeListCurrentLogs(); 
-  void ChangeListHistoryLogs(); 
+  void ChangeListHistoryLogs();
+#pragma endregion
   
 private:
+#pragma region Variables
   TSharedPtr<SListView<FAudioLogDataPtr>> ListView;
+  TSharedPtr<SHeaderRow> HeaderWidget;
   
+  FName CurrentSortColumn = NAME_None;
+  EColumnSortMode::Type CurrentSortMode = EColumnSortMode::None;
+#pragma endregion
+
+#pragma region Methods
   TSharedRef<ITableRow> OnGenerateRowForListView(FAudioLogDataPtr Item, const TSharedRef<STableViewBase>& OwnerTable);
   void OnAddLog(FAudioLogDataPtr LogPtr);
+#pragma endregion 
 };

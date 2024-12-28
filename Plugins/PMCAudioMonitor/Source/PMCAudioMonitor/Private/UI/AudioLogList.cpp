@@ -5,18 +5,30 @@
 
 #include "UI/AudioLogElement.h"
 
-#define CLASS SAudioLogList
+TArray<FAudioListHeaderElement> SAudioLogList::HeaderElements =
+    {
+    {TEXT("ID"), 1.0f},
+    {TEXT("Start Time"), 6.0f},
+    {TEXT("Volume"), 2.0f},
+    {TEXT("Pitch"), 2.0f},
+    {TEXT("PlayTime"), 4.0f},
+    {TEXT("Position"), 6.0f},
+    {TEXT("Context"), 10.0f},
+    {TEXT("Audio Source"), 10.0f},
+    {TEXT("Prevent"), 2.0f}
+    };
 
-void CLASS::Construct(const FArguments& InArgs)
+#pragma region Public
+void SAudioLogList::Construct(const FArguments& InArgs)
 {
-    FPMCAudioManager::Get()->OnAddLog.AddRaw(this, &CLASS::OnAddLog);
+    FPMCAudioManager::Get()->OnAddLog.AddRaw(this, &SAudioLogList::OnAddLog);
 
     auto& Items = FPMCAudioManager::Get()->GetLogs();
     
     ListView = SNew(SListView<FAudioLogDataPtr>)
         .ItemHeight(SIZE_ELEMENT)
         .ListItemsSource(&Items) 
-        .OnGenerateRow(this, &CLASS::OnGenerateRowForListView);
+        .OnGenerateRow(this, &SAudioLogList::OnGenerateRowForListView);
     
     ChildSlot
     [
@@ -45,52 +57,73 @@ void CLASS::Construct(const FArguments& InArgs)
     ];
 }
 
-TSharedPtr<SHeaderRow> CLASS::ListHeaderWidget()
+TSharedPtr<SHeaderRow> SAudioLogList::ListHeaderWidget()
 {
-    TArray<FString> HeaderElements =
-    {
-        TEXT("ID"),
-        TEXT("Start Time"),
-        TEXT("Volume"),
-        TEXT("Pitch"),
-        TEXT("Position"),
-        TEXT("Context"),
-        TEXT("Audio Source"),
-        TEXT("Prevent"),
-    };
-
-    TArray<float> HeaderWidthRatios =
-    {
-        1.0f,
-        6.0f,
-        2.0f,
-        2.0f,
-        6.0f,
-        10.0f,
-        10.0f,
-        2.0f,
-    };
+    HeaderWidget = SNew(SHeaderRow);
     
-    TSharedPtr<SHeaderRow> Header = SNew(SHeaderRow);
-
-    check(HeaderElements.Num() ==  HeaderWidthRatios.Num());
     int32 Len = HeaderElements.Num();
     for (int32 i = 0; i < Len; i++)
     {
         auto element = HeaderElements[i];
-        Header->AddColumn(
-            SHeaderRow::Column(*element)
-            .DefaultLabel(FText::FromString(element))
-            .FillWidth(HeaderWidthRatios[i])
+        auto OnSort = [this, element](
+            EColumnSortPriority::Type SortPriority,
+            const FName& ColumnId,
+            EColumnSortMode::Type SortType) 
+        {
+            bool bCurrent = CurrentSortColumn == *element.Name;
+            
+            if(bCurrent)
+            {
+                CurrentSortMode = (CurrentSortMode == EColumnSortMode::Ascending) ?
+                    EColumnSortMode::Descending : EColumnSortMode::Ascending;
+            }else
+            {
+                CurrentSortColumn = ColumnId;
+                CurrentSortMode = EColumnSortMode::Ascending;
+            }
+
+            auto& Logs = FPMCAudioManager::Get()->GetLogs();
+            if(bCurrent)
+            {
+                Logs.Sort([this, element](
+                    const FAudioLogDataPtr& A,
+                    const FAudioLogDataPtr& B) -> bool
+                {
+                    auto Compare = FAudioLogData::OnCompare(*element.Name);
+
+                    if(CurrentSortMode == EColumnSortMode::Ascending)
+                    {
+                        return Compare.Execute(*A, *B);
+                    }else
+                    {
+                        return !Compare.Execute(*A, *B);
+                    }
+                });
+            }
+
+            ListView->RequestListRefresh();
+        };
+        auto SortMode = [this, element]() -> EColumnSortMode::Type
+        {
+            return CurrentSortColumn == *element.Name ?
+                CurrentSortMode : EColumnSortMode::None;
+        };
+        
+        HeaderWidget->AddColumn(
+            SHeaderRow::Column(*element.Name)
+            .DefaultLabel(FText::FromString(*element.Name))
+            .FillWidth(element.Weight)
             .HAlignHeader(HAlign_Center)
             .VAlignHeader(VAlign_Center)
+            .SortMode_Lambda(SortMode)
+            .OnSort_Lambda(OnSort)
         );
     }
     
-    return Header;
+    return HeaderWidget;
 }
 
-void CLASS::ChangeListCurrentLogs()
+void SAudioLogList::ChangeListCurrentLogs()
 {
     auto& Items = FPMCAudioManager::Get()->GetLogs();
     
@@ -98,7 +131,7 @@ void CLASS::ChangeListCurrentLogs()
     ListView->RequestListRefresh();
 };
 
-void CLASS::ChangeListHistoryLogs()
+void SAudioLogList::ChangeListHistoryLogs()
 {
     auto& Items = FPMCAudioManager::Get()->History;
 
@@ -106,44 +139,50 @@ void CLASS::ChangeListHistoryLogs()
     ListView->RequestListRefresh();
 };
 
-TSharedPtr<SHorizontalBox> CLASS::ListTabGroup()
+TSharedPtr<SHorizontalBox> SAudioLogList::ListTabGroup()
 {
+    ButtonCurrent = SNew(SButton)
+        .Text(FText::FromString("Current"))
+        .HAlign(HAlign_Center)
+        .IsEnabled_Lambda([this]()
+        {
+            return ListTabState == EListTabState::History;
+        })
+        .OnClicked_Lambda([this]()
+        {
+            ListTabState = EListTabState::Current;
+            ChangeListCurrentLogs();
+            return FReply::Handled();
+        });
+
+    ButtonHistory = SNew(SButton)
+        .Text(FText::FromString("History"))
+        .HAlign(HAlign_Center)
+        .IsEnabled_Lambda([this]()
+        {
+            return ListTabState == EListTabState::Current;
+        })
+        .OnClicked_Lambda([this]()
+        {
+            ListTabState = EListTabState::History;
+            ChangeListHistoryLogs();
+            return FReply::Handled();
+        });
+    
     return SNew(SHorizontalBox)
     + SHorizontalBox::Slot()
     [
-        SNew(SButton)
-            .Text(FText::FromString("Current"))
-            .HAlign(HAlign_Center)
-            .IsEnabled_Lambda([this]()
-            {
-                return ListTabState == EListTabState::History;
-            })
-            .OnClicked_Lambda([this]()
-            {
-                ListTabState = EListTabState::Current;
-                ChangeListCurrentLogs();
-                return FReply::Handled();
-            })
+        ButtonCurrent.ToSharedRef()
     ]
     +SHorizontalBox::Slot()
     [
-        SNew(SButton)
-            .Text(FText::FromString("History"))
-            .HAlign(HAlign_Center)
-            .IsEnabled_Lambda([this]()
-            {
-                return ListTabState == EListTabState::Current;
-            })
-            .OnClicked_Lambda([this]()
-            {
-                ListTabState = EListTabState::History;
-                ChangeListHistoryLogs();
-                return FReply::Handled();
-            })
+        ButtonHistory.ToSharedRef()
     ];
 }
+#pragma region
 
-TSharedRef<ITableRow> CLASS::OnGenerateRowForListView(
+#pragma region Private
+TSharedRef<ITableRow> SAudioLogList::OnGenerateRowForListView(
   FAudioLogDataPtr Item, 
   const TSharedRef<STableViewBase>& OwnerTable)
 {
@@ -154,7 +193,8 @@ TSharedRef<ITableRow> CLASS::OnGenerateRowForListView(
     ];
 }
 
-void CLASS::OnAddLog(FAudioLogDataPtr LogPtr)
+void SAudioLogList::OnAddLog(FAudioLogDataPtr LogPtr)
 {
     ListView->RequestListRefresh();
 }
+#pragma endregion

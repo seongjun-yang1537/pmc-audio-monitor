@@ -3,6 +3,8 @@
 #include "CoreMinimal.h"
 #include "AudioLogData.generated.h"
 
+DECLARE_DELEGATE_RetVal_TwoParams(bool, FAudioLogDataComparer, const FAudioLogData&,  const FAudioLogData&);
+
 USTRUCT(BlueprintType)
 struct FAudioLogData
 {
@@ -21,6 +23,9 @@ public:
   float Pitch;
 
   UPROPERTY()
+  float PlayTime;
+
+  UPROPERTY()
   FVector3d Position;
 
   UPROPERTY()
@@ -33,4 +38,6 @@ public:
   bool bPrevent;
 
   FAudioLogData() {}
+  
+  static FAudioLogDataComparer OnCompare(FString Element);
 };

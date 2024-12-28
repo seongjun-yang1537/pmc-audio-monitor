@@ -40,6 +40,7 @@ FReply CLASS::OnAddEmptyLog()
 	EmptyLog.StartTime = FDateTime::Now();
 	EmptyLog.Volume = FMath::FRandRange(0.0f, 1.0f);
 	EmptyLog.Pitch = FMath::FRandRange(0.0f, 1.0f);
+	EmptyLog.PlayTime = FMath::FRandRange(0.0f, 1.0f);
 	EmptyLog.Position = FVector3d(
 		FMath::FRandRange(0.0f, 100.0f),
 		FMath::FRandRange(0.0f, 100.0f),
