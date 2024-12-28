@@ -19,6 +19,11 @@ TArray<FAudioListHeaderElement> SAudioLogList::HeaderElements =
     };
 
 #pragma region Public
+SAudioLogList::~SAudioLogList()
+{
+    FPMCAudioManager::Get()->OnAddLog.RemoveAll(this);
+}
+
 void SAudioLogList::Construct(const FArguments& InArgs)
 {
     FPMCAudioManager::Get()->OnAddLog.AddRaw(this, &SAudioLogList::OnAddLog);

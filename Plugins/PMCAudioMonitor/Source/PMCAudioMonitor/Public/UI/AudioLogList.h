@@ -25,6 +25,8 @@ public:
   SLATE_BEGIN_ARGS(SAudioLogList){}
   SLATE_END_ARGS()
 
+  ~SAudioLogList();
+
 #pragma region Variables
   static TArray<FAudioListHeaderElement> HeaderElements;
   
