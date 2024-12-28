@@ -2,9 +2,7 @@
 
 #include "PMCAudioManager.h"
 
-#define CLASS SAudioOptionPanel
-
-void CLASS::Construct(const FArguments& Args)
+void SAudioOptionPanel::Construct(const FArguments& Args)
 {
 	ChildSlot
 	[
@@ -24,13 +22,20 @@ void CLASS::Construct(const FArguments& Args)
 			[
 				SNew(SButton)
 				.Text(FText::FromString("Add Empty Log"))
-				.OnClicked(this, &CLASS::OnAddEmptyLog)
+				.OnClicked(this, &SAudioOptionPanel::OnAddEmptyLog)
 			]
+			+ SHorizontalBox::Slot()
+            .AutoWidth()
+            [
+            	SNew(SButton)
+            	.Text(FText::FromString("Clear Logs"))
+            	.OnClicked(this, &SAudioOptionPanel::OnClearLogs)
+            ]
 		]
 	];
 }
 
-FReply CLASS::OnAddEmptyLog()
+FReply SAudioOptionPanel::OnAddEmptyLog()
 {
 	auto Manager = FPMCAudioManager::Get();
 	int32 Len = Manager->GetLogs().Num();
@@ -51,5 +56,11 @@ FReply CLASS::OnAddEmptyLog()
 	EmptyLog.bPrevent = Len%2 == 0;
 	
 	Manager->AddLog(EmptyLog);
+	return FReply::Handled();
+}
+
+FReply SAudioOptionPanel::OnClearLogs()
+{
+	FPMCAudioManager::Get()->GetLogs().Reset();
 	return FReply::Handled();
 }
