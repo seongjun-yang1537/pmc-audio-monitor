@@ -43,10 +43,6 @@ FAudioLogDataComparer FAudioLogData::OnCompare(FString Element)
 		{
 			return A.GetVolume() < B.GetVolume();
 		}
-		else if (Element == "PlayTime")
-		{
-			return A.PlayTime < B.PlayTime;
-		}
 		else if (Element == "Position")
 		{
 			return CompareVector3d(A.Position, B.Position);
@@ -101,20 +97,7 @@ void SAudioLogElement::Construct(const FArguments& Args)
 				TEXT("%.2f"),
 				Log.GetPitch()))),
 				
-		SNew(SOverlay)
-		+ SOverlay::Slot()
-		[
-			SNew(SProgressBar)
-				.Percent(Log.PlayTime)
-				.FillColorAndOpacity(FLinearColor::Green)
-		]
-		+SOverlay::Slot()
-		[
-			SNew(STextBlock)
-			.Text(FText::FromString(FString::Printf(
-					TEXT("%.2f"),
-					Log.PlayTime)))
-		],
+		PlayTimeWidget(Log),
 		
 		SNew(STextBlock)
 			.Text(FText::FromString(
@@ -184,6 +167,36 @@ TSharedPtr<SWidget> SAudioLogElement::AudioSourceWidget(FAudioLogData LogData)
 		]
 	];
 }
+
+TSharedPtr<SWidget> SAudioLogElement::PlayTimeWidget(FAudioLogData LogData)
+{
+	auto PlayTimeGetter = TAttribute<TOptional<float>>::Create(
+					TAttribute<TOptional<float>>::FGetter::CreateLambda([LogData]() -> TOptional<float>
+					{
+						return TOptional<float>(LogData.GetPlayTime());
+					}));
+	auto PlayTimeStringGetter = TAttribute<FText>::Create(
+					TAttribute<FText>::FGetter::CreateLambda([LogData]() -> FText
+					{
+						return FText::FromString(FString::Printf(
+							TEXT("%.2f"),
+							LogData.GetPlayTime()));
+					}));
+	
+	return 	SNew(SOverlay)
+		+ SOverlay::Slot()
+		[
+			SNew(SProgressBar)
+				.Percent(PlayTimeGetter)
+				.FillColorAndOpacity(FLinearColor::Green)
+		]
+		+SOverlay::Slot()
+		[
+			SNew(STextBlock)
+				.Text(PlayTimeStringGetter)
+		];
+}
+
 
 #pragma endregion
 

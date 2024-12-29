@@ -18,7 +18,6 @@ void UPMCAudioMonitorBlueprintLibrary::AddSoundLog(UAudioComponent* AudioCompone
 	FAudioLogData Log = FAudioLogData(AudioComponent);
 	Log.Id = Len+1;
 	Log.StartTime = FDateTime::Now();
-	Log.PlayTime = FMath::FRandRange(0.0f, 1.0f);
 	Log.Position = AudioComponent->GetComponentLocation();
 	Log.Context = TEXT("Context");
 	Log.AudioSource = TEXT("Audio Source");

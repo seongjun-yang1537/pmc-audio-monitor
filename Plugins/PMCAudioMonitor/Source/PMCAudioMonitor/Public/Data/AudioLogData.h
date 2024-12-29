@@ -17,9 +17,6 @@ public:
   FDateTime StartTime;
 
   UPROPERTY()
-  float PlayTime;
-
-  UPROPERTY()
   FVector3d Position;
 
   UPROPERTY()
@@ -39,6 +36,7 @@ public:
   
   float GetPitch() const;
   float GetVolume() const;
+  float GetPlayTime() const;
 
   FString GetSoundCueName() const;
   FName GetSoundCueAssetPathName() const;
@@ -50,4 +48,5 @@ public:
 private:
   FString SoundCueName;
   FName SoundCueAssetPathName;
+  float SoundCueDuration;
 };
