@@ -160,43 +160,42 @@ void SAudioLogElement::Construct(const FArguments& Args)
 
 TSharedPtr<SWidget> SAudioLogElement::AudioSourceWidget(FAudioLogData LogData)
 {
-	auto SoundCue = LogData.GetSoundCue();
-	
 	return 	SNew(SHorizontalBox)
 	+ SHorizontalBox::Slot()
 	.AutoWidth()
 	[
 		SNew(STextBlock)
-			.Text(FText::FromString(SoundCue->GetName()))
+			.Text(FText::FromString(LogData.GetSoundCueName()))
 	]
 	+ SHorizontalBox::Slot()
 	.AutoWidth()
 	[
 		SNew(SButton)
+		.OnClicked_Lambda([this, LogData]() -> FReply
+		{
+			HighlightSoundCueInContentBrowser(LogData.GetSoundCueAssetPathName());
+			return FReply::Handled();
+		})
+		.ButtonStyle(FCoreStyle::Get(), "NoBorder")
 		[
 			SNew(SImage)
 				.Image(
 					FSlateIcon(FAppStyle::GetAppStyleSetName(), "Icons.BrowseContent").GetIcon())
 		]
-		.OnClicked_Lambda([this, SoundCue]() -> FReply
-		{
-			HighlightSoundCueInContentBrowser(SoundCue);
-			return FReply::Handled();
-		})
 	];
 }
 
 #pragma endregion
 
 #pragma region Private
-void SAudioLogElement::HighlightSoundCueInContentBrowser(USoundCue* SoundCue)
+void SAudioLogElement::HighlightSoundCueInContentBrowser(FName ContentBrowserPath)
 {
 	FAssetRegistryModule& AssetRegistryModule =
 		FModuleManager::LoadModuleChecked<FAssetRegistryModule>("AssetRegistry");
 	IAssetRegistry& AssetRegistry = AssetRegistryModule.Get();
 
 	FAssetData AssetData =
-		AssetRegistry.GetAssetByObjectPath(FSoftObjectPath(SoundCue).GetAssetPathName());
+		AssetRegistry.GetAssetByObjectPath(ContentBrowserPath);
 	if(AssetData.IsValid())
 	{
 		TArray<FAssetData> SelectedAssets;

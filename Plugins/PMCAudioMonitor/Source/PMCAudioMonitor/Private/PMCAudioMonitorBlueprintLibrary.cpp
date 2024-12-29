@@ -15,7 +15,7 @@ void UPMCAudioMonitorBlueprintLibrary::AddSoundLog(UAudioComponent* AudioCompone
 	auto Manager = FPMCAudioManager::Get();
 	int32 Len = Manager->GetLogs().Num();
 	
-	FAudioLogData Log = FAudioLogData();
+	FAudioLogData Log = FAudioLogData(AudioComponent);
 	Log.Id = Len+1;
 	Log.StartTime = FDateTime::Now();
 	Log.PlayTime = FMath::FRandRange(0.0f, 1.0f);
@@ -23,7 +23,6 @@ void UPMCAudioMonitorBlueprintLibrary::AddSoundLog(UAudioComponent* AudioCompone
 	Log.Context = TEXT("Context");
 	Log.AudioSource = TEXT("Audio Source");
 	Log.bPrevent = Len%2 == 0;
-	Log.AudioComponent = AudioComponent;
 
 	USoundCue* SoundCue = Log.GetSoundCue();
 	UE_LOG(LogTemp, Log, TEXT("%s"), *SoundCue->GetName());

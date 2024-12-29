@@ -19,5 +19,5 @@ public:
 private:
 	TSharedPtr<SWidget> AudioSourceWidget(FAudioLogData LogData);
 	
-	void HighlightSoundCueInContentBrowser(USoundCue* SoundCue);
+	void HighlightSoundCueInContentBrowser(FName ContentBrowserPath);
 };

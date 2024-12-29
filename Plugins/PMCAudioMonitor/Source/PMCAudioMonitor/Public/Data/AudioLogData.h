@@ -34,12 +34,20 @@ public:
   UPROPERTY()
   UAudioComponent* AudioComponent;
 
-  FAudioLogData() {}
+  FAudioLogData();
+  FAudioLogData(UAudioComponent* AudioComponent);
   
   float GetPitch() const;
   float GetVolume() const;
 
+  FString GetSoundCueName() const;
+  FName GetSoundCueAssetPathName() const;
+  
   USoundCue* GetSoundCue() const;
   
   static FAudioLogDataComparer OnCompare(FString Element);
+
+private:
+  FString SoundCueName;
+  FName SoundCueAssetPathName;
 };

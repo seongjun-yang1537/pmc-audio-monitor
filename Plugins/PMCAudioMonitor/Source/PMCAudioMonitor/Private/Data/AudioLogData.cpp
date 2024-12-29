@@ -3,6 +3,23 @@
 #include "Sound/SoundCue.h"
 #include "Components/AudioComponent.h"
 
+#pragma region Public
+class FAssetRegistryModule;
+class IAssetRegistry;
+
+FAudioLogData::FAudioLogData()
+{
+
+}
+FAudioLogData::FAudioLogData(UAudioComponent* AudioComponent)
+{
+	this->AudioComponent = AudioComponent;
+
+	auto SoundCue = GetSoundCue();
+	SoundCueName = SoundCue->GetName();
+	SoundCueAssetPathName = FSoftObjectPath(SoundCue).GetAssetPathName();
+}
+
 float FAudioLogData::GetPitch() const
 {
 	if(!AudioComponent)
@@ -38,3 +55,16 @@ USoundCue* FAudioLogData::GetSoundCue() const
 	}
 	return nullptr;
 }
+#pragma endregion
+
+#pragma region Private
+FString FAudioLogData::GetSoundCueName() const
+{
+	return SoundCueName;
+}
+
+FName FAudioLogData::GetSoundCueAssetPathName() const
+{
+	return SoundCueAssetPathName;
+}
+#pragma endregion

@@ -37,23 +37,6 @@ void SAudioOptionPanel::Construct(const FArguments& Args)
 
 FReply SAudioOptionPanel::OnAddEmptyLog()
 {
-	auto Manager = FPMCAudioManager::Get();
-	int32 Len = Manager->GetLogs().Num();
-	
-	FAudioLogData EmptyLog = FAudioLogData();
-	EmptyLog.Id = Len+1;
-	EmptyLog.StartTime = FDateTime::Now();
-	EmptyLog.PlayTime = FMath::FRandRange(0.0f, 1.0f);
-	EmptyLog.Position = FVector3d(
-		FMath::FRandRange(0.0f, 100.0f),
-		FMath::FRandRange(0.0f, 100.0f),
-		FMath::FRandRange(0.0f, 100.0f)
-	);
-	EmptyLog.Context = TEXT("Context");
-	EmptyLog.AudioSource = TEXT("Audio Source");
-	EmptyLog.bPrevent = Len%2 == 0;
-	
-	Manager->AddLog(EmptyLog);
 	return FReply::Handled();
 }
 
