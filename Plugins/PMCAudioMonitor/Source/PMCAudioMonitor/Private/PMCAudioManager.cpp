@@ -1,37 +1,39 @@
 #include "PMCAudioManager.h"
 
-#define CLASS FPMCAudioManager
+TUniquePtr<FPMCAudioManager> FPMCAudioManager::instance = nullptr;
 
-TUniquePtr<CLASS> CLASS::instance = nullptr;
-
-CLASS::CLASS()
+FPMCAudioManager::FPMCAudioManager()
 {
-	
 }
 
-CLASS::~CLASS()
+FPMCAudioManager::~FPMCAudioManager()
 {
 	OnAddLog.Clear();
 	UE_LOG(LogTemp, Log, TEXT("[My Debug]"));
 }
 
-CLASS* CLASS::Get()
+FPMCAudioManager* FPMCAudioManager::Get()
 {
 	if(!instance.IsValid())
 	{
-		instance = MakeUnique<CLASS>();
+		instance = MakeUnique<FPMCAudioManager>();
 	}
 	return instance.Get();
 }
 
-TArray<FAudioLogDataPtr>& CLASS::GetLogs()
+TArray<FAudioLogDataPtr>& FPMCAudioManager::GetLogs()
 {
 	return Logs;
 }
 
-void CLASS::AddLog(FAudioLogData Log)
+void FPMCAudioManager::AddLog(FAudioLogData Log)
 {
 	FAudioLogDataPtr LogPtr = MakeShared<FAudioLogData>(Log);
 	Logs.Add(LogPtr);
 	OnAddLog.Broadcast(LogPtr);
+}
+
+void FPMCAudioManager::ClearLog()
+{
+	Logs.Reset();
 }

@@ -23,7 +23,7 @@ FAudioLogData::FAudioLogData(UAudioComponent* AudioComponent)
 
 float FAudioLogData::GetPitch() const
 {
-	if(!AudioComponent)
+	if(!AudioComponent.IsValid())
 	{
 		return -1.0f;
 	}
@@ -32,7 +32,7 @@ float FAudioLogData::GetPitch() const
 
 float FAudioLogData::GetVolume() const
 {
-	if(!AudioComponent)
+	if(!AudioComponent.IsValid())
 	{
 		return -1.0f;
 	}
@@ -41,7 +41,7 @@ float FAudioLogData::GetVolume() const
 
 float FAudioLogData::GetPlayTime() const
 {
-	if(!AudioComponent)
+	if(!AudioComponent.IsValid())
 	{
 		return 1.0f;
 	}
@@ -55,7 +55,7 @@ float FAudioLogData::GetPlayTime() const
 
 USoundCue* FAudioLogData::GetSoundCue() const
 {
-	if(!AudioComponent)
+	if(!AudioComponent.IsValid())
 	{
 		return nullptr;
 	}

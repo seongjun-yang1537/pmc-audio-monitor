@@ -29,7 +29,7 @@ public:
   bool bPrevent;
 
   UPROPERTY()
-  UAudioComponent* AudioComponent;
+  TWeakObjectPtr<UAudioComponent> AudioComponent;
 
   FAudioLogData();
   FAudioLogData(UAudioComponent* AudioComponent);

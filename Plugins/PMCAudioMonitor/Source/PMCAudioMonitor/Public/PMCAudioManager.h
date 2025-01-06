@@ -18,6 +18,7 @@ public:
 	
 	TArray<FAudioLogDataPtr>& GetLogs();
 	void AddLog(FAudioLogData Log);
+	void ClearLog();
 
 	TArray<FAudioLogDataPtr> History;
 

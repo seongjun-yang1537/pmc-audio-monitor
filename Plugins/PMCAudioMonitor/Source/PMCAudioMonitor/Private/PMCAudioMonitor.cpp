@@ -2,26 +2,28 @@
 
 #include "PMCAudioMonitor.h"
 
+#include "PMCAudioManager.h"
 #include "ToolMenus.h"
 #include "UI/AudioLogList.h"
 #include "UI/AudioOptionPanel.h"
 
 #define LOCTEXT_NAMESPACE "FPMCAudioMonitorModule"
-#define CLASS FPMCAudioMonitorModule
 #define DOCKTAB_NAME "PMCAudioMonitorDockTab"
 
-void CLASS::StartupModule()
+#pragma region Public
+void FPMCAudioMonitorModule::StartupModule()
 {
   RegisterMenus();
   RegisterDockTab();
+  RegisterHandler();
 }
 
-void CLASS::ShutdownModule()
+void FPMCAudioMonitorModule::ShutdownModule()
 {
   UnRegisterDockTab();
 }
 
-void CLASS::RegisterMenus()
+void FPMCAudioMonitorModule::RegisterMenus()
 {
   FToolMenuOwnerScoped OwnerScoped(this);
 
@@ -31,35 +33,48 @@ void CLASS::RegisterMenus()
     "Open Audio Monitor Window",
     LOCTEXT("OpenAudioMonitorWindow", "Open Audio Monitor Window"),
     LOCTEXT("OpenAudioMonitorWindowTooltip", "Open a Audio Monitor Window."),
-    FSlateIcon(FAppStyle::GetAppStyleSetName(), "ClassIcon.AudioVolume"),
-    FUIAction(FExecuteAction::CreateRaw(this, &CLASS::OnSpawnDockTab))
+    FSlateIcon(FAppStyle::GetAppStyleSetName(), "FPMCAudioMonitorModuleIcon.AudioVolume"),
+    FUIAction(FExecuteAction::CreateRaw(this, &FPMCAudioMonitorModule::OnSpawnDockTab))
   );
 }
 
-void CLASS::RegisterDockTab()
+void FPMCAudioMonitorModule::RegisterDockTab()
 {
   TSharedRef<FWorkspaceItem> WorkspaceGroup = FWorkspaceItem::NewGroup(FText::FromString(DOCKTAB_NAME));
 
   FGlobalTabmanager::Get()->RegisterNomadTabSpawner(
     DOCKTAB_NAME,
-    FOnSpawnTab::CreateRaw(this, &CLASS::CreateDockTab)
+    FOnSpawnTab::CreateRaw(this, &FPMCAudioMonitorModule::CreateDockTab)
   )
   .SetDisplayName(LOCTEXT(DOCKTAB_NAME, "PMC Audio Monitor"))
-  .SetIcon(FSlateIcon(FAppStyle::GetAppStyleSetName(), "ClassIcon.AudioVolume"))
+  .SetIcon(FSlateIcon(FAppStyle::GetAppStyleSetName(), "FPMCAudioMonitorModuleIcon.AudioVolume"))
   .SetGroup(WorkspaceGroup);
 }
 
-void CLASS::UnRegisterDockTab()
+void FPMCAudioMonitorModule::RegisterHandler()
+{
+  FEditorDelegates::BeginPIE.AddLambda([](const bool bIsSimulating)
+  {
+    FPMCAudioManager::Get()->ClearLog();
+  });
+
+  FEditorDelegates::EndPIE.AddLambda([](const bool bIsSimulating)
+  {
+    FPMCAudioManager::Get()->ClearLog();
+  });
+}
+
+void FPMCAudioMonitorModule::UnRegisterDockTab()
 {
   FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(DOCKTAB_NAME);
 }
 
-void CLASS::OnSpawnDockTab()
+void FPMCAudioMonitorModule::OnSpawnDockTab()
 {
   FGlobalTabmanager::Get()->TryInvokeTab(FTabId(DOCKTAB_NAME));
 }
 
-TSharedRef<SDockTab> CLASS::CreateDockTab(const FSpawnTabArgs& SpawnTabArgs)
+TSharedRef<SDockTab> FPMCAudioMonitorModule::CreateDockTab(const FSpawnTabArgs& SpawnTabArgs)
 {
   return SNew(SDockTab)
   .TabRole(ETabRole::NomadTab)
@@ -77,6 +92,7 @@ TSharedRef<SDockTab> CLASS::CreateDockTab(const FSpawnTabArgs& SpawnTabArgs)
     ]
   ];
 }
+#pragma region
 
 #undef LOCTEXT_NAMESPACE
 	

@@ -14,6 +14,7 @@ public:
 
   void RegisterMenus();
   void RegisterDockTab();
+	void RegisterHandler();
   
   void UnRegisterDockTab();
 
