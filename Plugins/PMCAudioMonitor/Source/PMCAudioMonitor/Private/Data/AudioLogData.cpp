@@ -6,15 +6,21 @@
 #pragma region Public
 void UAudioLogData::Init(UAudioComponent* Audio)
 {
-	StartTime = FDateTime::Now();
+	this->StartTime = FDateTime::Now();
 	this->AudioComponent = Audio;
 
-	// auto SoundCue = GetSoundCue();
-	// SoundCueName = SoundCue->GetName();
-	// SoundCueAssetPathName = FSoftObjectPath(SoundCue).GetAssetPathName();
-	//
-	// auto Sound = AudioComponent->Sound;
-	// SoundCueDuration = Sound->GetDuration();
+	InitHandler();
+}
+
+void UAudioLogData::InitHandler()
+{
+	AudioComponent->OnAudioPlaybackPercentNative.AddLambda([&](
+	const UAudioComponent* Audio,
+	const USoundWave* Wave,
+	const float Percent)
+	{
+		PlayPercent = Percent;
+	});
 }
 
 float UAudioLogData::GetPitch() const
@@ -33,20 +39,6 @@ float UAudioLogData::GetVolume() const
 		return -1.0f;
 	}
 	return AudioComponent->VolumeMultiplier;
-}
-
-float UAudioLogData::GetPlayTime() const
-{
-	if(!AudioComponent.IsValid())
-	{
-		return 1.0f;
-	}
-	if(!AudioComponent->IsPlaying())
-	{
-		return 0.0f;
-	}
-	auto Time = FDateTime::Now() - StartTime;
-	return Time.GetTotalSeconds() / SoundCueDuration;
 }
 
 USoundCue* UAudioLogData::GetSoundCue() const

@@ -31,10 +31,6 @@ FAudioLogDataComparer UAudioLogData::OnCompare(FString Element)
 		{
 			return A.Id < B.Id;
 		}
-		else if (Element == "StartTime")
-		{
-			return A.StartTime < B.StartTime;
-		}
 		else if (Element == "Volume")
 		{
 			return A.GetVolume() < B.GetVolume();
@@ -171,17 +167,18 @@ TSharedPtr<SWidget> SAudioLogElement::AudioSourceWidget(UAudioLogDataPtr LogData
 TSharedPtr<SWidget> SAudioLogElement::PlayTimeWidget(UAudioLogDataPtr LogData)
 {
 	auto PlayTimeGetter = TAttribute<TOptional<float>>::Create(
-					TAttribute<TOptional<float>>::FGetter::CreateLambda([LogData]() -> TOptional<float>
-					{
-						return TOptional<float>(LogData->GetPlayTime());
-					}));
+	TAttribute<TOptional<float>>::FGetter::CreateLambda([LogData]() -> TOptional<float>
+	{
+		
+		return TOptional<float>(LogData.IsValid() ? LogData->PlayPercent : 1.0f);
+	}));
 	auto PlayTimeStringGetter = TAttribute<FText>::Create(
-					TAttribute<FText>::FGetter::CreateLambda([LogData]() -> FText
-					{
-						return FText::FromString(FString::Printf(
-							TEXT("%.2f"),
-							LogData->GetPlayTime()));
-					}));
+	TAttribute<FText>::FGetter::CreateLambda([LogData]() -> FText
+	{
+		return FText::FromString(FString::Printf(
+			TEXT("%.2f"),
+			LogData.IsValid() ? LogData->PlayPercent : 1.0f));
+	}));
 	
 	return 	SNew(SOverlay)
 		+ SOverlay::Slot()

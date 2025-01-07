@@ -17,6 +17,9 @@ public:
   FDateTime StartTime;
 
   UPROPERTY()
+  float PlayPercent;
+
+  UPROPERTY()
   FVector3d Position;
 
   UPROPERTY()
@@ -30,6 +33,7 @@ public:
 
   UFUNCTION(BlueprintCallable)
   void Init(UAudioComponent* Audio);
+  void InitHandler();
   
   UPROPERTY()
   TWeakObjectPtr<UAudioComponent> AudioComponent;
