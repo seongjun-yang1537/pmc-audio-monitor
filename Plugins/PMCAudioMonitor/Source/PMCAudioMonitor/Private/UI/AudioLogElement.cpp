@@ -6,6 +6,9 @@
 #include "UI/AudioLogList.h"
 #include "Widgets/Notifications/SProgressBar.h"
 
+#define CREATE_ATTRIBUTE(type, lambda) TAttribute<type>::Create(\
+	TAttribute<type>::FGetter::CreateLambda(lambda))
+
 #pragma region Public
 
 #pragma region Static
@@ -139,12 +142,18 @@ void SAudioLogElement::Construct(const FArguments& Args)
 
 TSharedPtr<SWidget> SAudioLogElement::AudioSourceWidget(UAudioLogDataPtr LogData)
 {
+	auto SoundCueNameGetter = CREATE_ATTRIBUTE(FText, [LogData]() -> FText
+	{
+		auto fstr = LogData.IsValid() ? LogData->GetSoundCueName() : TEXT("");
+		return FText::FromString(fstr);
+	});
+	
 	return 	SNew(SHorizontalBox)
 	+ SHorizontalBox::Slot()
 	.AutoWidth()
 	[
 		SNew(STextBlock)
-			.Text(FText::FromString(LogData->GetSoundCueName()))
+			.Text(SoundCueNameGetter)
 	]
 	+ SHorizontalBox::Slot()
 	.AutoWidth()
@@ -166,19 +175,17 @@ TSharedPtr<SWidget> SAudioLogElement::AudioSourceWidget(UAudioLogDataPtr LogData
 
 TSharedPtr<SWidget> SAudioLogElement::PlayTimeWidget(UAudioLogDataPtr LogData)
 {
-	auto PlayTimeGetter = TAttribute<TOptional<float>>::Create(
-	TAttribute<TOptional<float>>::FGetter::CreateLambda([LogData]() -> TOptional<float>
+	auto PlayTimeGetter = CREATE_ATTRIBUTE(TOptional<float>, [LogData]()
 	{
-		
-		return TOptional<float>(LogData.IsValid() ? LogData->PlayPercent : 1.0f);
-	}));
-	auto PlayTimeStringGetter = TAttribute<FText>::Create(
-	TAttribute<FText>::FGetter::CreateLambda([LogData]() -> FText
+		return TOptional(LogData.IsValid() ? LogData->PlayPercent : 1.0f);
+	});
+
+	auto PlayTimeStringGetter = CREATE_ATTRIBUTE(FText, [LogData]() -> FText
 	{
 		return FText::FromString(FString::Printf(
 			TEXT("%.2f"),
 			LogData.IsValid() ? LogData->PlayPercent : 1.0f));
-	}));
+	});
 	
 	return 	SNew(SOverlay)
 		+ SOverlay::Slot()
@@ -193,8 +200,6 @@ TSharedPtr<SWidget> SAudioLogElement::PlayTimeWidget(UAudioLogDataPtr LogData)
 				.Text(PlayTimeStringGetter)
 		];
 }
-
-
 #pragma endregion
 
 #pragma region Private

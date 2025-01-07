@@ -15,9 +15,7 @@ void UPMCAudioMonitorBlueprintLibrary::AddSoundLog(UAudioComponent* AudioCompone
 	int32 Len = Manager->GetLogs().Num();
 
 	UAudioLogData* Ptr = NewObject<UAudioLogData>();
-	Ptr->Init(AudioComponent);
-	
-	UAudioLogDataPtr LogPtr = MakeWeakObjectPtr<UAudioLogData>(Ptr);
+	UAudioLogDataPtr LogPtr = MakeWeakObjectPtr<UAudioLogData>(Ptr->Init(AudioComponent));
 	LogPtr->Id = Len+1;
 	LogPtr->Position = AudioComponent->GetComponentLocation();
 	LogPtr->Context = TEXT("Context");

@@ -4,12 +4,14 @@
 #include "Components/AudioComponent.h"
 
 #pragma region Public
-void UAudioLogData::Init(UAudioComponent* Audio)
+UAudioLogData* UAudioLogData::Init(UAudioComponent* Audio)
 {
 	this->StartTime = FDateTime::Now();
 	this->AudioComponent = Audio;
 
 	InitHandler();
+
+	return this;
 }
 
 void UAudioLogData::InitHandler()
@@ -20,6 +22,23 @@ void UAudioLogData::InitHandler()
 	const float Percent)
 	{
 		PlayPercent = Percent;
+	});
+
+	AudioComponent->OnAudioPlayStateChangedNative.AddLambda([&](
+		const UAudioComponent* Audio,
+		EAudioComponentPlayState State)
+	{
+		switch (State)
+		{
+			case EAudioComponentPlayState::Playing:
+			{
+				OnPlay.Broadcast();
+			}break;
+			case EAudioComponentPlayState::Stopped:
+			{
+				OnPlayEnd.Broadcast();
+			}break;
+		}
 	});
 }
 
@@ -47,27 +66,38 @@ USoundCue* UAudioLogData::GetSoundCue() const
 	{
 		return nullptr;
 	}
-	USoundBase* Sound = AudioComponent->GetSound();
-	if(Sound && Sound->IsA<USoundCue>())
-	{
-		USoundCue* SoundCue = Cast<USoundCue>(Sound);
-		if(SoundCue)
-		{
-			return SoundCue;
-		}
-	}
-	return nullptr;
+	return Cast<USoundCue>(AudioComponent->GetSound());
 }
 #pragma endregion
 
 #pragma region Private
 FString UAudioLogData::GetSoundCueName() const
 {
-	return SoundCueName;
+	auto SoundCue = GetSoundCue();
+	if (!SoundCue)
+	{
+		return TEXT("Null");
+	}
+	return SoundCue->GetName();
 }
 
 FName UAudioLogData::GetSoundCueAssetPathName() const
 {
-	return SoundCueAssetPathName;
+	auto SoundCue = GetSoundCue();
+	if (!SoundCue)
+	{
+		return TEXT("");
+	}
+	return FSoftObjectPath(SoundCue).GetAssetPathName();
 }
+
+float UAudioLogData::GetDuration() const
+{
+	if (!AudioComponent.IsValid() || !AudioComponent->Sound)
+	{
+		return -1.0f;
+	}
+	return AudioComponent->Sound->GetDuration();
+}
+
 #pragma endregion
