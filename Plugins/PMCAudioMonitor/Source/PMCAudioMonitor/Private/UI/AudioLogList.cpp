@@ -2,6 +2,7 @@
 
 #include "Widgets/Views/STableRow.h"
 #include "PMCAudioManager.h"
+#include "Components/AudioComponent.h"
 
 #include "UI/AudioLogElement.h"
 
@@ -128,61 +129,35 @@ TSharedPtr<SHeaderRow> SAudioLogList::ListHeaderWidget()
     return HeaderWidget;
 }
 
-void SAudioLogList::ChangeListCurrentLogs()
-{
-    auto& Items = FPMCAudioManager::Get()->GetLogs();
-    
-    ListView->SetItemsSource(&Items);
-    ListView->RequestListRefresh();
-};
-
-void SAudioLogList::ChangeListHistoryLogs()
-{
-    auto& Items = FPMCAudioManager::Get()->History;
-
-    ListView->SetItemsSource(&Items);
-    ListView->RequestListRefresh();
-};
-
 TSharedPtr<SHorizontalBox> SAudioLogList::ListTabGroup()
 {
-    ButtonCurrent = SNew(SButton)
-        .Text(FText::FromString("Current"))
-        .HAlign(HAlign_Center)
-        .IsEnabled_Lambda([this]()
-        {
-            return ListTabState == EListTabState::History;
-        })
-        .OnClicked_Lambda([this]()
-        {
-            ListTabState = EListTabState::Current;
-            ChangeListCurrentLogs();
-            return FReply::Handled();
-        });
+    auto HorizontalBox = SNew(SHorizontalBox);
 
-    ButtonHistory = SNew(SButton)
-        .Text(FText::FromString("History"))
-        .HAlign(HAlign_Center)
-        .IsEnabled_Lambda([this]()
-        {
-            return ListTabState == EListTabState::Current;
-        })
-        .OnClicked_Lambda([this]()
-        {
-            ListTabState = EListTabState::History;
-            ChangeListHistoryLogs();
-            return FReply::Handled();
-        });
-    
-    return SNew(SHorizontalBox)
-    + SHorizontalBox::Slot()
-    [
-        ButtonCurrent.ToSharedRef()
-    ]
-    +SHorizontalBox::Slot()
-    [
-        ButtonHistory.ToSharedRef()
-    ];
+    UEnum* Enum = StaticEnum<ELogVisibleType>();
+    for (ELogVisibleType Type : TEnumRange<ELogVisibleType>())
+    {
+        FString Name = Enum->GetNameStringByValue(static_cast<int64>(Type));
+        
+        HorizontalBox->AddSlot()
+        [
+            SNew(SButton)
+            .Text(FText::FromString(Name))
+            .HAlign(HAlign_Center)
+            .IsEnabled_Lambda([this, Type]()
+            {
+                
+                return LogVisibleState != Type;
+            })
+            .OnClicked_Lambda([this, Type]()
+            {
+                LogVisibleState = Type;
+                ListView->RebuildList();
+                return FReply::Handled();
+            })
+        ];
+    }
+
+    return HorizontalBox;
 }
 #pragma region
 
@@ -191,15 +166,48 @@ TSharedRef<ITableRow> SAudioLogList::OnGenerateRowForListView(
   UAudioLogDataPtr Item, 
   const TSharedRef<STableViewBase>& OwnerTable)
 {
-    return SNew(STableRow<UAudioLogDataPtr>, OwnerTable)
-    [
-        SNew(SAudioLogElement)
-            .Log(Item)
-    ];
+    if (IsVisibleLog(LogVisibleState, Item))
+    {
+        return SNew(STableRow<UAudioLogDataPtr>, OwnerTable)
+        [
+            SNew(SAudioLogElement)
+                .Log(Item)
+        ];
+    }
+    else
+    {
+        return SNew(STableRow<UAudioLogDataPtr>, OwnerTable)
+        [
+            SNullWidget::NullWidget
+        ];
+    }
+}
+
+bool SAudioLogList::IsVisibleLog(ELogVisibleType VisibleType, UAudioLogDataPtr LogPtr)
+{
+    if (!LogPtr.IsValid())
+    {
+        return false;
+    }
+    auto AudioComponent = LogPtr->AudioComponent;
+    
+    switch (VisibleType)
+    {
+        case ELogVisibleType::Current:
+            return AudioComponent.IsValid() && AudioComponent->IsPlaying();
+        case ELogVisibleType::History:
+            return !AudioComponent.IsValid() || !AudioComponent->IsPlaying(); 
+    }
+    return false;
 }
 
 void SAudioLogList::OnAddLog(UAudioLogDataPtr LogPtr)
 {
+    auto AudioComponent = LogPtr->AudioComponent;
+    AudioComponent->OnAudioFinishedNative.AddLambda([this](auto _)
+    {
+        ListView->RebuildList();
+    });
     ListView->RequestListRefresh();
 }
 

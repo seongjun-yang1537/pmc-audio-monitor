@@ -19,6 +19,15 @@ public:
   FAudioListHeaderElement(FString Name, float Weight) : Name(Name), Weight(Weight) {}
 };
 
+UENUM(BlueprintType)
+enum class ELogVisibleType : uint8
+{
+  Current UMETA(DisplayName = "Current"),
+  History UMETA(DisplayName = "History"),
+  Max UMETA(Hidden),
+};
+ENUM_RANGE_BY_COUNT(ELogVisibleType, ELogVisibleType::Max);
+
 class SAudioLogList : public SCompoundWidget
 {
 public:
@@ -30,15 +39,7 @@ public:
 #pragma region Variables
   static TArray<FAudioListHeaderElement> HeaderElements;
   
-  enum EListTabState
-  {
-    Current,
-    History,
-  };
-  EListTabState ListTabState = EListTabState::Current;
-
-  TSharedPtr<SButton> ButtonCurrent;
-  TSharedPtr<SButton> ButtonHistory;
+  ELogVisibleType LogVisibleState = ELogVisibleType::Current;
 #pragma endregion 
 
 #pragma region Methods
@@ -46,9 +47,8 @@ public:
   
   TSharedPtr<SHeaderRow> ListHeaderWidget();
   TSharedPtr<SHorizontalBox> ListTabGroup();
-
-  void ChangeListCurrentLogs(); 
-  void ChangeListHistoryLogs();
+  
+  bool IsVisibleLog(ELogVisibleType VisibleType, UAudioLogDataPtr LogPtr);
 #pragma endregion
   
 private:
