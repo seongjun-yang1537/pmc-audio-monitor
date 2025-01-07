@@ -3,8 +3,8 @@
 #include "CoreMinimal.h"
 #include "Data/AudioLogData.h"
 
-typedef TSharedPtr<FAudioLogData> FAudioLogDataPtr;
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnAddLog, FAudioLogDataPtr);
+typedef TWeakObjectPtr<UAudioLogData> UAudioLogDataPtr;
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnAddLog, UAudioLogDataPtr);
 
 class FPMCAudioManager
 {
@@ -16,14 +16,14 @@ public:
 	
 	static FPMCAudioManager* Get();
 	
-	TArray<FAudioLogDataPtr>& GetLogs();
-	void AddLog(FAudioLogData Log);
+	TArray<UAudioLogDataPtr>& GetLogs();
+	void AddLog(UAudioLogDataPtr LogPtr);
 	void ClearLog();
 
-	TArray<FAudioLogDataPtr> History;
+	TArray<UAudioLogDataPtr> History;
 
 private:
 	static TUniquePtr<FPMCAudioManager> instance;
 
-	TArray<FAudioLogDataPtr> Logs;
+	TArray<UAudioLogDataPtr> Logs;
 };

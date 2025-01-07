@@ -8,7 +8,7 @@
 #define SIZE_ELEMENT 24
 #define SCROLL_MAX_ELEMENT 15
 
-typedef TSharedPtr<FAudioLogData> FAudioLogDataPtr;
+typedef TWeakObjectPtr<UAudioLogData> UAudioLogDataPtr;
 
 struct FAudioListHeaderElement
 {
@@ -53,7 +53,7 @@ public:
   
 private:
 #pragma region Variables
-  TSharedPtr<SListView<FAudioLogDataPtr>> ListView;
+  TSharedPtr<SListView<UAudioLogDataPtr>> ListView;
   TSharedPtr<SHeaderRow> HeaderWidget;
   
   FName CurrentSortColumn = NAME_None;
@@ -61,7 +61,7 @@ private:
 #pragma endregion
 
 #pragma region Methods
-  TSharedRef<ITableRow> OnGenerateRowForListView(FAudioLogDataPtr Item, const TSharedRef<STableViewBase>& OwnerTable);
-  void OnAddLog(FAudioLogDataPtr LogPtr);
+  TSharedRef<ITableRow> OnGenerateRowForListView(UAudioLogDataPtr Item, const TSharedRef<STableViewBase>& OwnerTable);
+  void OnAddLog(UAudioLogDataPtr LogPtr);
 #pragma endregion 
 };

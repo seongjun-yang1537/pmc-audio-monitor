@@ -4,24 +4,20 @@
 #include "Components/AudioComponent.h"
 
 #pragma region Public
-FAudioLogData::FAudioLogData()
+void UAudioLogData::Init(UAudioComponent* Audio)
 {
 	StartTime = FDateTime::Now();
-}
-FAudioLogData::FAudioLogData(UAudioComponent* AudioComponent)
-{
-	StartTime = FDateTime::Now();
-	this->AudioComponent = AudioComponent;
+	this->AudioComponent = Audio;
 
-	auto SoundCue = GetSoundCue();
-	SoundCueName = SoundCue->GetName();
-	SoundCueAssetPathName = FSoftObjectPath(SoundCue).GetAssetPathName();
-
-	auto Sound = AudioComponent->Sound;
-	SoundCueDuration = Sound->GetDuration();
+	// auto SoundCue = GetSoundCue();
+	// SoundCueName = SoundCue->GetName();
+	// SoundCueAssetPathName = FSoftObjectPath(SoundCue).GetAssetPathName();
+	//
+	// auto Sound = AudioComponent->Sound;
+	// SoundCueDuration = Sound->GetDuration();
 }
 
-float FAudioLogData::GetPitch() const
+float UAudioLogData::GetPitch() const
 {
 	if(!AudioComponent.IsValid())
 	{
@@ -30,7 +26,7 @@ float FAudioLogData::GetPitch() const
 	return AudioComponent->PitchMultiplier;
 }
 
-float FAudioLogData::GetVolume() const
+float UAudioLogData::GetVolume() const
 {
 	if(!AudioComponent.IsValid())
 	{
@@ -39,7 +35,7 @@ float FAudioLogData::GetVolume() const
 	return AudioComponent->VolumeMultiplier;
 }
 
-float FAudioLogData::GetPlayTime() const
+float UAudioLogData::GetPlayTime() const
 {
 	if(!AudioComponent.IsValid())
 	{
@@ -53,7 +49,7 @@ float FAudioLogData::GetPlayTime() const
 	return Time.GetTotalSeconds() / SoundCueDuration;
 }
 
-USoundCue* FAudioLogData::GetSoundCue() const
+USoundCue* UAudioLogData::GetSoundCue() const
 {
 	if(!AudioComponent.IsValid())
 	{
@@ -73,12 +69,12 @@ USoundCue* FAudioLogData::GetSoundCue() const
 #pragma endregion
 
 #pragma region Private
-FString FAudioLogData::GetSoundCueName() const
+FString UAudioLogData::GetSoundCueName() const
 {
 	return SoundCueName;
 }
 
-FName FAudioLogData::GetSoundCueAssetPathName() const
+FName UAudioLogData::GetSoundCueAssetPathName() const
 {
 	return SoundCueAssetPathName;
 }

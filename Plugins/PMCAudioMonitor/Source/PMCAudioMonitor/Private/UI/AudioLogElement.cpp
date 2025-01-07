@@ -9,7 +9,7 @@
 #pragma region Public
 
 #pragma region Static
-FAudioLogDataComparer FAudioLogData::OnCompare(FString Element)
+FAudioLogDataComparer UAudioLogData::OnCompare(FString Element)
 {
 	auto CompareVector3d = [](const FVector3d& A, const FVector3d& B) -> bool
 	{
@@ -25,7 +25,7 @@ FAudioLogDataComparer FAudioLogData::OnCompare(FString Element)
 	};
 	
 	return FAudioLogDataComparer::CreateLambda(
-		[Element, CompareVector3d](const FAudioLogData& A, const FAudioLogData& B) -> bool
+		[Element, CompareVector3d](const UAudioLogData& A, const UAudioLogData& B) -> bool
 	{
 		if (Element == "Id")
 		{
@@ -73,29 +73,29 @@ void SAudioLogElement::Construct(const FArguments& Args)
 	TArray<TSharedPtr<SWidget>> Widgets =
 	{
 		SNew(STextBlock)
-			.Text(FText::FromString(FString::FromInt(Log.Id))),
+			.Text(FText::FromString(FString::FromInt(Log->Id))),
 		
 		SNew(STextBlock)
-			.Text(FText::FromString(Log.StartTime.ToString())),
+			.Text(FText::FromString(Log->StartTime.ToString())),
 
 		SNew(SOverlay)
 		+ SOverlay::Slot()
 		[
 			SNew(SProgressBar)
-				.Percent(Log.GetVolume())
+				.Percent(Log->GetVolume())
 		]
 		+ SOverlay::Slot()
 		[
 			SNew(STextBlock)
 				.Text(FText::FromString(FString::Printf(
 						TEXT("%.2f"),
-						Log.GetVolume())))
+						Log->GetVolume())))
 		],
 		
 		SNew(STextBlock)
 			.Text(FText::FromString(FString::Printf(
 				TEXT("%.2f"),
-				Log.GetPitch()))),
+				Log->GetPitch()))),
 				
 		PlayTimeWidget(Log),
 		
@@ -103,18 +103,18 @@ void SAudioLogElement::Construct(const FArguments& Args)
 			.Text(FText::FromString(
 				FString::Printf(
 					TEXT("(%.2f, %.2f, %.2f)"),
-					Log.Position.X,
-					Log.Position.Y,
-					Log.Position.Z)
+					Log->Position.X,
+					Log->Position.Y,
+					Log->Position.Z)
 			)),
 		
 		SNew(STextBlock)
-			.Text(FText::FromString(Log.Context)),
+			.Text(FText::FromString(Log->Context)),
 
 		AudioSourceWidget(Log),
 		
 		SNew(SCheckBox)
-			.IsChecked(Log.bPrevent)
+			.IsChecked(Log->bPrevent)
 	};
 	
 	int32 Len = Widgets.Num();
@@ -141,14 +141,14 @@ void SAudioLogElement::Construct(const FArguments& Args)
 	];
 }
 
-TSharedPtr<SWidget> SAudioLogElement::AudioSourceWidget(FAudioLogData LogData)
+TSharedPtr<SWidget> SAudioLogElement::AudioSourceWidget(UAudioLogDataPtr LogData)
 {
 	return 	SNew(SHorizontalBox)
 	+ SHorizontalBox::Slot()
 	.AutoWidth()
 	[
 		SNew(STextBlock)
-			.Text(FText::FromString(LogData.GetSoundCueName()))
+			.Text(FText::FromString(LogData->GetSoundCueName()))
 	]
 	+ SHorizontalBox::Slot()
 	.AutoWidth()
@@ -156,7 +156,7 @@ TSharedPtr<SWidget> SAudioLogElement::AudioSourceWidget(FAudioLogData LogData)
 		SNew(SButton)
 		.OnClicked_Lambda([this, LogData]() -> FReply
 		{
-			HighlightSoundCueInContentBrowser(LogData.GetSoundCueAssetPathName());
+			HighlightSoundCueInContentBrowser(LogData->GetSoundCueAssetPathName());
 			return FReply::Handled();
 		})
 		.ButtonStyle(FCoreStyle::Get(), "NoBorder")
@@ -168,19 +168,19 @@ TSharedPtr<SWidget> SAudioLogElement::AudioSourceWidget(FAudioLogData LogData)
 	];
 }
 
-TSharedPtr<SWidget> SAudioLogElement::PlayTimeWidget(FAudioLogData LogData)
+TSharedPtr<SWidget> SAudioLogElement::PlayTimeWidget(UAudioLogDataPtr LogData)
 {
 	auto PlayTimeGetter = TAttribute<TOptional<float>>::Create(
 					TAttribute<TOptional<float>>::FGetter::CreateLambda([LogData]() -> TOptional<float>
 					{
-						return TOptional<float>(LogData.GetPlayTime());
+						return TOptional<float>(LogData->GetPlayTime());
 					}));
 	auto PlayTimeStringGetter = TAttribute<FText>::Create(
 					TAttribute<FText>::FGetter::CreateLambda([LogData]() -> FText
 					{
 						return FText::FromString(FString::Printf(
 							TEXT("%.2f"),
-							LogData.GetPlayTime()));
+							LogData->GetPlayTime()));
 					}));
 	
 	return 	SNew(SOverlay)

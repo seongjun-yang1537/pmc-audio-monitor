@@ -3,12 +3,12 @@
 #include "CoreMinimal.h"
 #include "AudioLogData.generated.h"
 
-DECLARE_DELEGATE_RetVal_TwoParams(bool, FAudioLogDataComparer, const FAudioLogData&,  const FAudioLogData&);
+DECLARE_DELEGATE_RetVal_TwoParams(bool, FAudioLogDataComparer, const UAudioLogData&,  const UAudioLogData&);
 
-USTRUCT(BlueprintType)
-struct FAudioLogData
+UCLASS(BlueprintType)
+class UAudioLogData : public UObject
 {
-  GENERATED_USTRUCT_BODY()
+  GENERATED_BODY()
 public:
   UPROPERTY()
   int32 Id;
@@ -28,11 +28,11 @@ public:
   UPROPERTY()
   bool bPrevent;
 
+  UFUNCTION(BlueprintCallable)
+  void Init(UAudioComponent* Audio);
+  
   UPROPERTY()
   TWeakObjectPtr<UAudioComponent> AudioComponent;
-
-  FAudioLogData();
-  FAudioLogData(UAudioComponent* AudioComponent);
   
   float GetPitch() const;
   float GetVolume() const;

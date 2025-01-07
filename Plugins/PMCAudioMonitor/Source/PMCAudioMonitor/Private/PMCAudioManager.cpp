@@ -21,14 +21,13 @@ FPMCAudioManager* FPMCAudioManager::Get()
 	return instance.Get();
 }
 
-TArray<FAudioLogDataPtr>& FPMCAudioManager::GetLogs()
+TArray<UAudioLogDataPtr>& FPMCAudioManager::GetLogs()
 {
 	return Logs;
 }
 
-void FPMCAudioManager::AddLog(FAudioLogData Log)
+void FPMCAudioManager::AddLog(UAudioLogDataPtr LogPtr)
 {
-	FAudioLogDataPtr LogPtr = MakeShared<FAudioLogData>(Log);
 	Logs.Add(LogPtr);
 	OnAddLog.Broadcast(LogPtr);
 }

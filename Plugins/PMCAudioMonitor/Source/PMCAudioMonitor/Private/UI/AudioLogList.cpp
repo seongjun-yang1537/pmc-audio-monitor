@@ -30,7 +30,7 @@ void SAudioLogList::Construct(const FArguments& InArgs)
 
     auto& Items = FPMCAudioManager::Get()->GetLogs();
     
-    ListView = SNew(SListView<FAudioLogDataPtr>)
+    ListView = SNew(SListView<UAudioLogDataPtr>)
         .ItemHeight(SIZE_ELEMENT)
         .ListItemsSource(&Items) 
         .OnGenerateRow(this, &SAudioLogList::OnGenerateRowForListView);
@@ -91,10 +91,10 @@ TSharedPtr<SHeaderRow> SAudioLogList::ListHeaderWidget()
             if(bCurrent)
             {
                 Logs.Sort([this, element](
-                    const FAudioLogDataPtr& A,
-                    const FAudioLogDataPtr& B) -> bool
+                    const UAudioLogDataPtr& A,
+                    const UAudioLogDataPtr& B) -> bool
                 {
-                    auto Compare = FAudioLogData::OnCompare(*element.Name);
+                    auto Compare = UAudioLogData::OnCompare(*element.Name);
 
                     if(CurrentSortMode == EColumnSortMode::Ascending)
                     {
@@ -188,17 +188,17 @@ TSharedPtr<SHorizontalBox> SAudioLogList::ListTabGroup()
 
 #pragma region Private
 TSharedRef<ITableRow> SAudioLogList::OnGenerateRowForListView(
-  FAudioLogDataPtr Item, 
+  UAudioLogDataPtr Item, 
   const TSharedRef<STableViewBase>& OwnerTable)
 {
-    return SNew(STableRow<FAudioLogDataPtr>, OwnerTable)
+    return SNew(STableRow<UAudioLogDataPtr>, OwnerTable)
     [
         SNew(SAudioLogElement)
-            .Log(*Item)
+            .Log(Item)
     ];
 }
 
-void SAudioLogList::OnAddLog(FAudioLogDataPtr LogPtr)
+void SAudioLogList::OnAddLog(UAudioLogDataPtr LogPtr)
 {
     ListView->RequestListRefresh();
 }

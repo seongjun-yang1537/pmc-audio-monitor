@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "Data/AudioLogData.h"
 #include "PMCAudioMonitorBlueprintLibrary.generated.h"
+
+typedef TWeakObjectPtr<UAudioLogData> UAudioLogDataPtr;
 
 /**
  * 
