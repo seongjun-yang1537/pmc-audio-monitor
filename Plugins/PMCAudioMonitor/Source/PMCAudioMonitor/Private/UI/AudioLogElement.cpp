@@ -182,23 +182,27 @@ TSharedPtr<SWidget> SAudioLogElement::PlayTimeWidget(UAudioLogDataPtr LogData)
 
 	auto PlayTimeStringGetter = CREATE_ATTRIBUTE(FText, [LogData]() -> FText
 	{
+		auto PlayPercent = LogData.IsValid() ? LogData->PlayPercent : 1.0f;
+		auto Duration = LogData.IsValid() ? LogData->GetDuration() : 1.0f;
+		
 		return FText::FromString(FString::Printf(
-			TEXT("%.2f"),
-			LogData.IsValid() ? LogData->PlayPercent : 1.0f));
+			TEXT("%.1f/%.1f"),
+			PlayPercent * Duration,
+			Duration));
 	});
 	
 	return 	SNew(SOverlay)
-		+ SOverlay::Slot()
-		[
-			SNew(SProgressBar)
-				.Percent(PlayTimeGetter)
-				.FillColorAndOpacity(FLinearColor::Green)
-		]
-		+SOverlay::Slot()
-		[
-			SNew(STextBlock)
-				.Text(PlayTimeStringGetter)
-		];
+	+ SOverlay::Slot()
+	[
+		SNew(SProgressBar)
+			.Percent(PlayTimeGetter)
+			.FillColorAndOpacity(FLinearColor::Green)
+	]
+	+SOverlay::Slot()
+	[
+		SNew(STextBlock)
+			.Text(PlayTimeStringGetter)
+	];
 }
 #pragma endregion
 

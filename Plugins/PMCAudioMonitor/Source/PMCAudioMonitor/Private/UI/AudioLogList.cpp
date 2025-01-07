@@ -31,11 +31,6 @@ void SAudioLogList::Construct(const FArguments& InArgs)
 
     auto& Items = FPMCAudioManager::Get()->GetLogs();
     
-    ListView = SNew(SListView<UAudioLogDataPtr>)
-        .ItemHeight(SIZE_ELEMENT)
-        .ListItemsSource(&Items) 
-        .OnGenerateRow(this, &SAudioLogList::OnGenerateRowForListView);
-    
     ChildSlot
     [
         SNew(SVerticalBox)
@@ -57,7 +52,10 @@ void SAudioLogList::Construct(const FArguments& InArgs)
             + SScrollBox::Slot()
             .MaxSize(SIZE_ELEMENT*SCROLL_MAX_ELEMENT)
             [
-                ListView.ToSharedRef()
+                SAssignNew(ListView, SListView<UAudioLogDataPtr>)
+                .ItemHeight(SIZE_ELEMENT)
+                .ListItemsSource(&Items) 
+                .OnGenerateRow(this, &SAudioLogList::OnGenerateRowForListView)
             ]
         ]
     ];
